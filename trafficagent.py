@@ -9,7 +9,7 @@ import io
 import os
 from selenium import webdriver
 import time
-def makeHtmlTrafficMap(lat, lon):
+def makeHtmlTrafficMap(lat, lon, api_key):
     try:
         os.remove("alocation.html")
     except FileNotFoundError:
@@ -54,7 +54,9 @@ def makeHtmlTrafficMap(lat, lon):
                   }
                 </script>
                 <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3AwtAm23rleosJ_npXy1yTbX1aijdalI&callback=initMap">
+                src="https://maps.googleapis.com/maps/api/js?key=""")
+        fw.write("{0}".format(api_key))        
+        fw.write("""&callback=initMap">
                 </script>
               </body>
             </html>
@@ -96,7 +98,7 @@ class Agent(Observer):
         self.__times_l.append(now)
         self.__duration_in_traffic_l.append(self.directions_result[0]["legs"][0]["duration_in_traffic"])
         self.__duration_l.append(self.directions_result[0]["legs"][0]["duration"])
-        makeHtmlTrafficMap((float(self.an_origin.split(', ')[0]) + float(self.a_destination.split(', ')[0]) )/2,(float(self.an_origin.split(', ')[1]) + float(self.a_destination.split(', ')[1] ))/2)
+        makeHtmlTrafficMap((float(self.an_origin.split(', ')[0]) + float(self.a_destination.split(', ')[0]) )/2,(float(self.an_origin.split(', ')[1]) + float(self.a_destination.split(', ')[1] ))/2, self.__apikey)
         takeScreenShot(now, self.__webdriverpath)
     def on_next(self, value):
         return self.getRoute(self.an_origin, self.a_destination)
